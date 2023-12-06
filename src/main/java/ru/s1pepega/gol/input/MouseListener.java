@@ -46,6 +46,32 @@ public class MouseListener {
             }
     }
 
+    public static double getMoveX(){
+        return instance().posX - instance().lastX;
+    }
+
+    public static double getPosX(){
+        return instance().posX;
+    }
+    public static double getLastX(){
+        return instance().lastX;
+    }
+
+    public static double getMoveY(){
+        return instance().posY - instance().lastY;
+    }
+
+    public static double getPosY(){
+        return instance().posY;
+    }
+    public static double getLastY(){
+        return instance().lastY;
+    }
+
+    public static double getScrollY(){
+        return instance().scrollY;
+    }
+
     public static void mouseScrollCallback(long window, double xOff, double yOff){
         instance().scrollX = xOff;
         instance().scrollY = yOff;

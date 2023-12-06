@@ -1,0 +1,84 @@
+
+//            angYZ -= MouseListener.getMoveY();
+//            glRotated(angYZ,1,0,0);
+//            angXZ += MouseListener.getMoveX()/2;
+//            glRotated(angXZ,0,1,0);
+//            scaleFactor += MouseListener.getScrollY()/10;
+//            double scale = Math.pow(10,scaleFactor);
+//            glScaled(scale,scale,scale);
+
+
+//Axis
+            glPointSize(5);
+            glBegin(GL_POINTS);
+            glColor3f(1,1,1);
+            glVertex3d(0,0,0);
+            glColor3f(1,0,0);
+            glVertex3d(1,0,0);
+            glColor3f(0,1,0);
+            glVertex3d(0,1,0);
+            glColor3f(0,0,1);
+            glVertex3d(0,0,1);
+            glEnd();
+
+
+            glLineWidth(1);
+            glBegin(GL_LINES);
+            glColor3f(1,0,0); glVertex3d(-100,0,0);
+            glColor3f(1,0,0); glVertex3d(100,0,0);
+
+            glColor3f(0,1,0); glVertex3d(0,-100,0);
+            glColor3f(0,1,0); glVertex3d(0,100,0);
+
+            glColor3f(0,0,1); glVertex3d(0,0,-100);
+            glColor3f(0,0,1); glVertex3d(0,0,100);
+            glEnd();
+
+            move += 0.005f;
+            glPushMatrix();
+                glPointSize(1);
+                glScaled(1,1,1);
+                glBegin(GL_LINE_STRIP);
+                double accuracy = 0.01;
+                for (double u = -Math.PI; u < Math.PI; u+=accuracy) {
+                    for (double v = -Math.PI/2; v < Math.PI/2; v+=accuracy) {
+                        double cosv = Math.cos(v);
+                        double sinv = Math.sin(v);
+                        double sin = Math.sin(u);
+                        double cos = Math.cos(u);
+
+                        double x = cos*cosv;
+                        double y = sin*cosv;
+                        double z = sinv;
+                        glColor3d(x,y,z);
+                        glVertex3d(x+2*Math.sin(move),y,z+2*Math.cos(move));
+                    }
+                }
+                glEnd();
+//                glRotated(ang+=2,1,49,0);
+//                glTranslated(1, Math.sin(ang/20), 1);
+//                glScaled(2,4,2);
+//
+//                glBegin(GL_TRIANGLES);
+//                    glColor3f(0,0,1); glVertex3d(0,0,.577d);//blue
+//                    glColor3f(1,1,1); glVertex3d(0,.8,0);//white
+//                    glColor3f(0,1,0); glVertex3d(.5d,0,-.289d);//green
+//                    glColor3f(0,0,1); glVertex3d(0,0,.577d);//blue
+//                    glColor3f(0,1,0); glVertex3d(.5d,0,-.289d);//green
+//                    glColor3f(0,0,0); glVertex3d(0,-.8,0);//black
+//
+//                    glColor3f(1,0,0); glVertex3d(-.5d,0,-.289d);//red
+//                    glColor3f(1,1,1); glVertex3d(0,.8,0);//white
+//                    glColor3f(0,0,1); glVertex3d(0,0,.577d);//blue
+//                    glColor3f(1,0,0); glVertex3d(-.5d,0,-.289d);//red
+//                    glColor3f(0,0,1); glVertex3d(0,0,.577d);//blue
+//                    glColor3f(0,0,0); glVertex3d(0,-.8,0);//black
+//
+//                    glColor3f(0,1,0); glVertex3d(.5d,0,-.289d);//green
+//                    glColor3f(1,1,1); glVertex3d(0,.8,0);//white
+//                    glColor3f(1,0,0); glVertex3d(-.5d,0,-.289d);//red
+//                    glColor3f(0,1,0); glVertex3d(.5d,0,-.289d);//green
+//                    glColor3f(1,0,0); glVertex3d(-.5d,0,-.289d);//red
+//                    glColor3f(0,0,0); glVertex3d(0,-.8,0);//black
+//                glEnd();
+            glPopMatrix();
