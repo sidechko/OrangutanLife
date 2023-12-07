@@ -6,7 +6,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class KeyboardListener {
-    private static KeyboardListener instance;
+    public static final KeyboardListener keyboard = new KeyboardListener();
     private boolean keyPressed[] = new boolean[350];
     private boolean keyBeginPress[] = new boolean[350];
 
@@ -14,33 +14,25 @@ public class KeyboardListener {
 
     }
 
-    public static KeyboardListener get() {
-        if (KeyboardListener.instance == null) {
-            KeyboardListener.instance = new KeyboardListener();
-        }
-
-        return KeyboardListener.instance;
-    }
-
-    public static void keyCallback(long window, int key, int scancode, int action, int mods) {
+    public void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
-            get().keyPressed[key] = true;
-            get().keyBeginPress[key] = true;
+            keyPressed[key] = true;
+            keyBeginPress[key] = true;
         } else if (action == GLFW_RELEASE) {
-            get().keyPressed[key] = false;
-            get().keyBeginPress[key] = false;
+            keyPressed[key] = false;
+            keyBeginPress[key] = false;
         }
     }
 
-    public static void endFrame() {
-        Arrays.fill(get().keyBeginPress, false);
+    public void endFrame() {
+        Arrays.fill(keyBeginPress, false);
     }
 
-    public static boolean isKeyPressed(int keyCode) {
-        return get().keyPressed[keyCode];
+    public boolean isKeyPressed(int keyCode) {
+        return keyPressed[keyCode];
     }
 
-    public static boolean keyBeginPress(int keyCode) {
-        return get().keyBeginPress[keyCode];
+    public boolean keyBeginPress(int keyCode) {
+        return keyBeginPress[keyCode];
     }
 }

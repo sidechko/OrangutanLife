@@ -4,11 +4,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener {
-    private static MouseListener listener;
     private double scrollX, scrollY;
     private double posX, posY, lastX, lastY;
     private boolean mouseButtonPressed[] = new boolean[3];
     private boolean isDragging;
+    public static final MouseListener mouse = new MouseListener();
 
     private MouseListener(){
         scrollX = 0d;
@@ -19,68 +19,62 @@ public class MouseListener {
         lastY = 0d;
     }
 
-    public static MouseListener instance(){
-        if(listener==null)
-            listener = new MouseListener();
-        return listener;
+    public void mousePosCallback(long window, double xpos, double ypos){
+        lastX = posX;
+        lastY = posY;
+        posX = xpos;
+        posY = ypos;
+        isDragging =
+                mouseButtonPressed[0]
+                || mouseButtonPressed[1]
+                || mouseButtonPressed[2];
     }
 
-    public static void mousePosCallback(long window, double xpos, double ypos){
-        instance().lastX = instance().posX;
-        instance().lastY = instance().posY;
-        instance().posX = xpos;
-        instance().posY = ypos;
-        instance().isDragging =
-                instance().mouseButtonPressed[0]
-                || instance().mouseButtonPressed[1]
-                || instance().mouseButtonPressed[2];
-    }
-
-    public static void mouseButtonCallback(long window, int button, int action, int mode){
-        if(button < instance().mouseButtonPressed.length)
+    public void mouseButtonCallback(long window, int button, int action, int mode){
+        if(button < mouseButtonPressed.length)
             if(action == GLFW_PRESS)
-                instance().mouseButtonPressed[button] = true;
+                mouseButtonPressed[button] = true;
             else if(action == GLFW_RELEASE){
-                instance().mouseButtonPressed[button] = false;
-                instance().isDragging = false;
+                mouseButtonPressed[button] = false;
+                isDragging = false;
             }
     }
 
-    public static double getMoveX(){
-        return instance().posX - instance().lastX;
+    public double getMoveX(){
+        return posX - lastX;
     }
 
-    public static double getPosX(){
-        return instance().posX;
+    public double getPosX(){
+        return posX;
     }
-    public static double getLastX(){
-        return instance().lastX;
-    }
-
-    public static double getMoveY(){
-        return instance().posY - instance().lastY;
+    public double getLastX(){
+        return lastX;
     }
 
-    public static double getPosY(){
-        return instance().posY;
-    }
-    public static double getLastY(){
-        return instance().lastY;
+    public double getMoveY(){
+        return posY - lastY;
     }
 
-    public static double getScrollY(){
-        return instance().scrollY;
+    public double getPosY(){
+        return posY;
+    }
+    public double getLastY(){
+        return lastY;
     }
 
-    public static void mouseScrollCallback(long window, double xOff, double yOff){
-        instance().scrollX = xOff;
-        instance().scrollY = yOff;
+    public double getScrollY(){
+        return scrollY;
     }
 
-    public static void endFrame(){
-        instance().scrollX = 0;
-        instance().scrollY = 0;
-        instance().lastX = instance().posX;
-        instance().lastY = instance().posY;
+    public void mouseScrollCallback(long window, double xOff, double yOff){
+        scrollX = xOff;
+        scrollY = yOff;
+    }
+
+    public void endFrame(){
+        scrollX = 0;
+        scrollY = 0;
+        lastX = posX;
+        lastY = posY;
     }
 }

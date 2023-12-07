@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL;
 import ru.s1pepega.gol.input.KeyboardListener;
 import ru.s1pepega.gol.input.MouseListener;
 import ru.s1pepega.gol.render.CameraController;
+import ru.s1pepega.gol.render.Renderer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -17,12 +18,12 @@ public class Window {
     private String title;
     private long glfwWindow;
     private CameraController camera = new CameraController();
-
+    private Renderer renderer = new Renderer();
     private static Window window = null;
 
     private Window() {
-        this.width = 1000;
-        this.height = 1000;
+        this.width = 500;
+        this.height = 500;
         this.title = "OrgLife";
     }
 
@@ -71,11 +72,11 @@ public class Window {
         if(glfwWindow == NULL)
             throw new IllegalStateException("Failed to create the GLFW window.");
 
-        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
-        glfwSetMouseButtonCallback(glfwWindow,MouseListener::mouseButtonCallback);
-        glfwSetScrollCallback(glfwWindow,MouseListener::mouseScrollCallback);
-        glfwSetKeyCallback(glfwWindow,KeyboardListener::keyCallback);
-
+        glfwSetCursorPosCallback(glfwWindow, MouseListener.mouse::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow,MouseListener.mouse::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow,MouseListener.mouse::mouseScrollCallback);
+        glfwSetKeyCallback(glfwWindow,KeyboardListener.keyboard::keyCallback);
+        glfwSetWindowSizeCallback(glfwWindow,this::onWindowResize);
         // Make gl context
         glfwMakeContextCurrent(glfwWindow);
 
@@ -88,7 +89,6 @@ public class Window {
         GL.createCapabilities();
     }
 
-    static final double i = 0.1;
     protected void loop() {
         while (!glfwWindowShouldClose(glfwWindow)){
             glfwPollEvents();
@@ -98,48 +98,20 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             glLoadIdentity();
-            glFrustum(-2,2,-2,2,1,100);
-            camera.applyTransfroms();
-            glPushMatrix();
-                glBegin(GL_QUADS);
-                    for (int x = -19; x < 20; x++) {
-                        for (int z = -19; z < 20; z++) {
-//                            glColor3d(((double)(x<<30>>>30))/3,((double)(z<<30>>>30))/3,1);
-                            if(x<<31==z<<31)
-                                glColor3d(1,1,1);
-                            else
-                                glColor3d(0,0,0);
-                            glVertex3d(x+1,0,z+1);
-                            glVertex3d(x,0,z+1);
-                            glVertex3d(x,0,z);
-                            glVertex3d(x+1,0,z);
-                        }
-                    }
-                    glColor3d(0,1,0);
-                    glVertex3d(1,1,1);
-                    glVertex3d(0,1,1);
-                    glVertex3d(0,1,0);
-                    glVertex3d(1,1,0);
-                glEnd();
-                glLineWidth(3);
-                glBegin(GL_LINES);
-                    glColor3d(1,0,0);
-                    glVertex3d(0,0,0);
-                    glVertex3d(5,0,0);
-                    glColor3d(0,1,0);
-                    glVertex3d(0,0,0);
-                    glVertex3d(0,5,0);
-                    glColor3d(0,0,1);
-                    glVertex3d(0,0,0);
-                    glVertex3d(0,0,5);
-                glEnd();
-            glPopMatrix();
-
+            renderer.applyFrustum();
+            camera.applyTransform();
+            renderer.render();
             glfwSwapBuffers(glfwWindow);
 
-            MouseListener.endFrame();
-            KeyboardListener.endFrame();
+            MouseListener.mouse.endFrame();
+            KeyboardListener.keyboard.endFrame();
         }
+    }
+
+    private void onWindowResize(long window, int width, int height){
+        camera.onWindowResize(width,height);
+        renderer.onWindowResize(width, height);
+        glViewport(0,0,width,height);
     }
 }
 
