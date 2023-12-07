@@ -13,6 +13,7 @@ public class CameraController {
     double xPos = 0.5, yPos = 1.7, zPos = 0.5;
     double speed = 0.5;
     boolean swap = false;
+    byte swapTime = 0;
     int wwc = 250;
     int whc = 250;
 
@@ -22,8 +23,9 @@ public class CameraController {
     }
     public void updateParams(long window){
         //swap
-        if(KeyboardListener.keyboard.isKeyPressed(GLFW_KEY_C))
-            swap = !swap;
+        if(KeyboardListener.keyboard.isKeyPressed(GLFW_KEY_C)){
+            if(swapTime++ == 0){swap = !swap; swapTime = 0;}
+        }
         if(swap) return;
 
         xRot += (MouseListener.mouse.getPosY()-whc)/5;

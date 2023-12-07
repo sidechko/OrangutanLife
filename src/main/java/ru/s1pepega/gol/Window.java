@@ -88,7 +88,8 @@ public class Window {
 
         GL.createCapabilities();
     }
-
+    double fov = 1;
+    boolean s = true;
     protected void loop() {
         while (!glfwWindowShouldClose(glfwWindow)){
             glfwPollEvents();
@@ -98,6 +99,14 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             glLoadIdentity();
+            if(s){
+                fov+=0.01;
+                s = fov<1.8;
+            }else {
+                fov-=0.01;
+                s = fov<0.8;
+            }
+            renderer.changeFOV(fov);
             renderer.applyFrustum();
             camera.applyTransform();
             renderer.render();

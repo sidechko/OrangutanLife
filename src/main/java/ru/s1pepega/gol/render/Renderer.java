@@ -4,18 +4,21 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 public class Renderer {
-    double fov = 1.5;
+    double fov = 1;
     double wCh = 1;
     double hCw = 1;
     double renderDistance = 100;
-
     public void onWindowResize(int width, int height){
         wCh = (double) width /height;
         hCw = (double) height /width;
     }
 
+    public void changeFOV(double fov){
+        this.fov = Math.max(0.8,Math.min(fov,1.8));
+    }
+
     public void applyFrustum(){
-        glFrustum(-2*fov*wCh,2*fov*wCh,-2*hCw,2*hCw, 1, renderDistance);
+        glFrustum(-1*fov*wCh,1*fov*wCh,-1*fov*hCw,1*fov*hCw, 1, renderDistance);
     }
 
     public void render(){
