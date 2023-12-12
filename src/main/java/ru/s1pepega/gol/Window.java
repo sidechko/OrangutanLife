@@ -5,8 +5,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import ru.s1pepega.gol.input.KeyboardListener;
 import ru.s1pepega.gol.input.MouseListener;
-import ru.s1pepega.gol.render.CameraController;
-import ru.s1pepega.gol.render.Renderer;
+import ru.s1pepega.gol.render.CameraSpaceRenderer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,10 +14,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     private int width, height;
-    private String title;
+    private final String title;
     private long glfwWindow;
-    private CameraController camera = new CameraController();
-    private Renderer renderer = new Renderer();
+    private final CameraSpaceRenderer camera = new CameraSpaceRenderer();
     private static Window window = null;
 
     private Window() {
@@ -77,6 +75,7 @@ public class Window {
         glfwSetScrollCallback(glfwWindow,MouseListener.mouse::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow,KeyboardListener.keyboard::keyCallback);
         glfwSetWindowSizeCallback(glfwWindow,this::onWindowResize);
+        glfwSetWindowFocusCallback(glfwWindow,this::onFocusChange);
         // Make gl context
         glfwMakeContextCurrent(glfwWindow);
 
@@ -88,29 +87,17 @@ public class Window {
 
         GL.createCapabilities();
     }
+
+    private void onFocusChange(long window, boolean isFocus) {
+        camera.setFreeze(!isFocus);
+    }
+
     double fov = 1;
-    boolean s = true;
     protected void loop() {
         while (!glfwWindowShouldClose(glfwWindow)){
             glfwPollEvents();
-            camera.updateParams(glfwWindow);
 
-            glClearColor(0.1f,0.1f,0.1f,1);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            glLoadIdentity();
-            if(s){
-                fov+=0.01;
-                s = fov<1.8;
-            }else {
-                fov-=0.01;
-                s = fov<0.8;
-            }
-            renderer.changeFOV(fov);
-            renderer.applyFrustum();
-            camera.applyTransform();
-            renderer.render();
-            glfwSwapBuffers(glfwWindow);
+            camera.render(glfwWindow);
 
             MouseListener.mouse.endFrame();
             KeyboardListener.keyboard.endFrame();
@@ -118,8 +105,9 @@ public class Window {
     }
 
     private void onWindowResize(long window, int width, int height){
+        this.width = width;
+        this.height = height;
         camera.onWindowResize(width,height);
-        renderer.onWindowResize(width, height);
         glViewport(0,0,width,height);
     }
 }
