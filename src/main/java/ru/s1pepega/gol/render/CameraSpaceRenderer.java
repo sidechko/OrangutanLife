@@ -1,9 +1,13 @@
 package ru.s1pepega.gol.render;
 
+import ru.s1pepega.gol.core.GameObject;
+import ru.s1pepega.gol.core.GameThreadRunnable;
+import ru.s1pepega.gol.core.debug.GO2DT;
 import ru.s1pepega.gol.input.KeyboardListener;
 import ru.s1pepega.gol.input.MouseListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.lang.Math.*;
@@ -11,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class CameraSpaceRenderer {
-    double xRot = 0, yRot = 0;
+    double xRot = 90, yRot = 90;
     double xPos = 0.5, yPos = 1.7, zPos = 0.5;
     double fov = 1, widthHeightCoef = 1, heightWidthCoef = 1, renderDistance = 100;
     int widthMid = 250, heightMid = 250;
@@ -75,54 +79,23 @@ public class CameraSpaceRenderer {
 
     public void render(long window){
         updateParams(window);
-
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0.1f,0.1f,0.1f,1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         changeFOV(fov);
         applyFrustum();
         applyTransform();
+
         render();
+
         glfwSwapBuffers(window);
     }
 
     private void render(){
         glPushMatrix();
-        debugRenderFig1();
         debugRenderAxis();
-        debugRenderFigs();
-        glPopMatrix();
-    }
-
-    List<IRendered> figs = new ArrayList<>();
-    {
-        figs.add(new Debug2DTile());
-    }
-    private void debugRenderFigs(){
-        figs.forEach(f->f.render(yRot,xRot));
-    }
-
-    private void debugRenderFig1(){
-        glPushMatrix();
-        glBegin(GL_QUADS);
-        for (int x = -19; x < 20; x++) {
-            for (int z = -19; z < 20; z++) {
-//                            glColor3d(((double)(x<<30>>>30))/3,((double)(z<<30>>>30))/3,1);
-                int a = x<<30>>>30;
-                int b = z<<30>>>30;
-                switch (a^b){
-                    case 0: glColor3d(1,1,1);break;
-                    case 1: glColor3d(1,0,0);break;
-                    case 2: glColor3d(0,1,0);break;
-                    case 3: glColor3d(0,0,1);break;
-                }
-                glVertex3d(x+1,0,z+1);
-                glVertex3d(x,0,z+1);
-                glVertex3d(x,0,z);
-                glVertex3d(x+1,0,z);
-            }
-        }
-        glEnd();
+        for (GameObject gameObject : GameThreadRunnable.game.getGameObjects()) gameObject.render(yRot, xRot);
         glPopMatrix();
     }
 
