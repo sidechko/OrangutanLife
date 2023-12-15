@@ -3,15 +3,11 @@ package ru.s1pepega.gol.core;
 import ru.s1pepega.gol.core.debug.GO2DT;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class GameThreadRunnable implements Runnable {
-    public static GameThreadRunnable game;
-    private static Thread MAIN_THREAD = null;
-    private volatile long lastTime = System.currentTimeMillis();
-
-    private ArrayList<GameObject> gameObjects = new ArrayList<>();
-
+public class GameLogic {
+    private long lastTime = System.currentTimeMillis();
+    private CopyOnWriteArrayList<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     {
         gameObjects.add(new GO2DT(1, 2, 3).setColor(0xffff00));
         gameObjects.add(new GO2DT(7, 7, 3).setColor(0x00ff00));
@@ -19,8 +15,7 @@ public class GameThreadRunnable implements Runnable {
         gameObjects.add(new GO2DT(6, 1, 5).setColor(0x781294));
     }
 
-    @Override
-    public void run() {
+    public void start() {
         while (true) {
             long current = System.currentTimeMillis();
             if (current - this.lastTime >= 40) {
@@ -31,7 +26,7 @@ public class GameThreadRunnable implements Runnable {
     }
     int c = 0;
     public void update() {
-        ArrayList<GameObject> updatedState = new ArrayList<>(gameObjects.size());
+        CopyOnWriteArrayList<GameObject> updatedState = new CopyOnWriteArrayList<>();
         for (GameObject gameObject : gameObjects) {
             gameObject.update();
             if (gameObject.needRemove)
@@ -44,16 +39,7 @@ public class GameThreadRunnable implements Runnable {
         gameObjects = updatedState;
     }
 
-    public ArrayList<GameObject> getGameObjects() {
+    public CopyOnWriteArrayList<GameObject> getGameObjects() {
         return gameObjects;
-    }
-
-    public static void initializeThread() {
-        if (MAIN_THREAD != null)
-            throw new IllegalStateException("Game logic thread initialized");
-        System.out.println("Initialize game thread!");
-        game = new GameThreadRunnable();
-        MAIN_THREAD = new Thread(game, "OranLfThread");
-        MAIN_THREAD.start();
     }
 }

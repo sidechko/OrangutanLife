@@ -3,7 +3,7 @@ package ru.s1pepega.gol.core;
 import static org.lwjgl.opengl.GL11.*;
 
 public abstract class GameObject {
-    protected int posX = 0, posY = 0, posZ = 0;
+    public int posX = 0, posY = 0, posZ = 0;
     protected boolean needRemove = false;
 
     //Draw entity from center
@@ -21,6 +21,8 @@ public abstract class GameObject {
         glPopMatrix();
         glPopMatrix();
     }
+
+
 
     public GameObject update(){
 

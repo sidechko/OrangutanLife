@@ -1,11 +1,10 @@
-package ru.s1pepega.gol;
+package ru.s1pepega.gol.render;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import ru.s1pepega.gol.input.KeyboardListener;
 import ru.s1pepega.gol.input.MouseListener;
-import ru.s1pepega.gol.render.CameraSpaceRenderer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;

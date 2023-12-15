@@ -1,14 +1,9 @@
 package ru.s1pepega.gol.render;
 
+import ru.s1pepega.gol.Main;
 import ru.s1pepega.gol.core.GameObject;
-import ru.s1pepega.gol.core.GameThreadRunnable;
-import ru.s1pepega.gol.core.debug.GO2DT;
 import ru.s1pepega.gol.input.KeyboardListener;
 import ru.s1pepega.gol.input.MouseListener;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import static java.lang.Math.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -86,17 +81,23 @@ public class CameraSpaceRenderer {
         changeFOV(fov);
         applyFrustum();
         applyTransform();
-
-        render();
-
+        _render();
         glfwSwapBuffers(window);
     }
 
-    private void render(){
+    private void _render(){
         glPushMatrix();
         debugRenderAxis();
-        for (GameObject gameObject : GameThreadRunnable.game.getGameObjects()) gameObject.render(yRot, xRot);
+        for (GameObject gameObject : Main.logic.getGameObjects()) {
+            if(inRenderDistance(gameObject))
+                gameObject.render(yRot, xRot);
+        }
         glPopMatrix();
+    }
+
+    private boolean inRenderDistance(GameObject gameObject){
+
+        return gameObject
     }
 
     private void debugRenderAxis(){
